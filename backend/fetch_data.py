@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from sqlmodel import Session, Field, Relationship, create_engine
+from sqlmodel import Session, select
 from .models import Location, Earthquake, Aftershock
 from .database import engine, create_db_and_tables
 

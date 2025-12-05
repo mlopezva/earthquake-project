@@ -32,7 +32,5 @@ class Aftershock(SQLModel, table=True):
     event_duration:Optional[float]=None
     earthquake:Optional[Earthquake] = Relationship(back_populates="aftershocks")
 
-db_path = "C:/Users/melva/OneDrive/Desktop/ASU/IEE305/earthquake-project/earthquake.db"
-engine = create_engine(f"sqlite:///{db_path}", echo=True)
-SQLModel.metadata.create_all(engine)   
+
     
