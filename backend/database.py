@@ -1,9 +1,10 @@
 import os
 from sqlmodel import SQLModel, create_engine, Session
 
-# Store the SQLite database IN THE BACKEND FOLDER, always safe
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "earthquake.db")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+db_folder = os.path.join(BASE_DIR, "database")
+os.makedirs(db_folder, exist_ok=True)
+db_path = os.path.join(db_folder, "earthquake.db")
 
 DATABASE_URL = f"sqlite:///{db_path}"
 
