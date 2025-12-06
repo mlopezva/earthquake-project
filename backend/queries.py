@@ -1,6 +1,6 @@
 from backend.database import engine
 from backend.models import Earthquake, Aftershock, Location
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from datetime import timedelta
 
 def earthquakes_with_nearby_aftershocks():
@@ -63,3 +63,83 @@ def strong_aftershocks_within_24h():
                         "event_time": a.event_time,
                     })
         return results
+
+def aftershocks_main_info_magnitude_gt_5():
+    """Query 4: Aftershocks with main earthquake info and region name above magnitude 5"""
+    with Session(engine) as session:
+        stmt = (
+            select(Aftershock, Earthquake, Location)
+            .join(Earthquake, Aftershock.earthquake_id == Earthquake.earthquake_id)
+            .join(Location, Earthquake.location_id == Location.location_id)
+            .where(Earthquake.magnitude > 5)
+        )
+        rows = session.exec(stmt).all()
+        return [
+            {
+                "aftershock_id": a.aftershock_id,
+                "aftershock_magnitude": a.magnitude,
+                "earthquake_id": e.earthquake_id,
+                "earthquake_magnitude": e.magnitude,
+                "region_name": l.region_name
+            }
+            for a, e, l in rows
+        ]
+
+
+def regions_above_avg_earthquake_counts():
+    """Query 5: Regions with above-average earthquake counts"""
+    with Session(engine) as session:
+        # Count earthquakes per region
+        stmt = select(
+            Location.region_name,
+            func.count(Earthquake.earthquake_id).label("quake_count")
+        ).join(Earthquake, Location.location_id == Earthquake.location_id)\
+         .group_by(Location.region_name)
+
+        rows = session.exec(stmt).all()
+
+        # Compute the average count
+        if not rows:
+            return []
+
+        avg_count = sum(r.quake_count for r in rows) / len(rows)
+
+        # Return only regions with count above average
+        return [
+            {"region": r.region_name, "count": r.quake_count}
+            for r in rows if r.quake_count > avg_count
+        ]
+
+def top_10_seismically_active_regions():
+    """Query 6: Top 10 most seismically active regions"""
+    with Session(engine) as session:
+        stmt = select(Location, Earthquake).join(Earthquake, Location.location_id == Earthquake.location_id)
+        rows = session.exec(stmt).all()
+
+        counts = {}
+        for loc, eq in rows:
+            counts[loc.region_name] = counts.get(loc.region_name, 0) + 1
+
+        # Sort by count descending and return top 10
+        sorted_regions = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+        return [{"region": region, "earthquake_count": count} for region, count in sorted_regions[:10]]
+
+
+def earthquakes_above_average_magnitude():
+    """Query 7: Earthquakes with magnitude above overall average"""
+    with Session(engine) as session:
+        all_eq = session.exec(select(Earthquake)).all()
+        if not all_eq:
+            return []
+
+        avg_mag = sum(e.magnitude for e in all_eq) / len(all_eq)
+        above_avg = [e for e in all_eq if e.magnitude > avg_mag]
+        return [
+            {
+                "earthquake_id": e.earthquake_id,
+                "magnitude": e.magnitude,
+                "location_id": e.location_id,
+                "event_time": e.event_time
+            }
+            for e in above_avg
+        ]
