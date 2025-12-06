@@ -10,6 +10,4 @@ httpx==0.25.0
 streamlit==1.28.0
 pandas==2.1.1
 matplotlib==3.8.1
-
-# Optional (for date/time handling if needed)
 python-dateutil==2.8.2

@@ -67,13 +67,16 @@ def strong_aftershocks_within_24h():
 def aftershocks_main_info_magnitude_gt_5():
     """Query 4: Aftershocks with main earthquake info and region name above magnitude 5"""
     with Session(engine) as session:
+        # Select aftershock, main earthquake, and the region information
         stmt = (
             select(Aftershock, Earthquake, Location)
             .join(Earthquake, Aftershock.earthquake_id == Earthquake.earthquake_id)
             .join(Location, Earthquake.location_id == Location.location_id)
-            .where(Earthquake.magnitude > 5)
+            .where(Earthquake.magnitude > 5) #Above  magnitude of 5
         )
         rows = session.exec(stmt).all()
+
+        # Construct the result as a list of dictionaries
         return [
             {
                 "aftershock_id": a.aftershock_id,
@@ -113,9 +116,11 @@ def regions_above_avg_earthquake_counts():
 def top_10_seismically_active_regions():
     """Query 6: Top 10 most seismically active regions"""
     with Session(engine) as session:
+        # Select all locations and their earthquakes
         stmt = select(Location, Earthquake).join(Earthquake, Location.location_id == Earthquake.location_id)
         rows = session.exec(stmt).all()
 
+        # Count earthquakes for each region
         counts = {}
         for loc, eq in rows:
             counts[loc.region_name] = counts.get(loc.region_name, 0) + 1
@@ -128,12 +133,17 @@ def top_10_seismically_active_regions():
 def earthquakes_above_average_magnitude():
     """Query 7: Earthquakes with magnitude above overall average"""
     with Session(engine) as session:
+        # Get all earthquakes
         all_eq = session.exec(select(Earthquake)).all()
         if not all_eq:
             return []
 
+        # Calculate overall average magnitude
         avg_mag = sum(e.magnitude for e in all_eq) / len(all_eq)
+        # Filter earthquakes that have magnitude above the overall average
         above_avg = [e for e in all_eq if e.magnitude > avg_mag]
+
+        # Construct the result as a list of dictionaries
         return [
             {
                 "earthquake_id": e.earthquake_id,

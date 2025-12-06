@@ -15,7 +15,6 @@ app = FastAPI()
 def home():
     return {"message": "Earthquake API running"}
 
-# Descriptive query endpoints
 @app.get("/earthquakes/nearby-aftershocks")
 def get_earthquakes_with_nearby_aftershocks():
     return earthquakes_with_nearby_aftershocks()
