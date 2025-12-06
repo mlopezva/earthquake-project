@@ -24,13 +24,10 @@ class Earthquake(SQLModel, table=True):
     aftershocks:List["Aftershock"]=Relationship(back_populates="earthquake")
 
 class Aftershock(SQLModel, table=True):
-    aftershock_id:Optional[int]= Field(default=None, primary_key=True)
+    aftershock_id: str = Field(primary_key=True)
     earthquake_id:str= Field(foreign_key="earthquake.earthquake_id")
     magnitude:float
     distance_from_main:Optional[float]=None
     event_time:datetime
     event_duration:Optional[float]=None
     earthquake:Optional[Earthquake] = Relationship(back_populates="aftershocks")
-
-
-    
