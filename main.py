@@ -42,3 +42,15 @@ def get_top_10_seismically_active_regions():
 @app.get("/earthquakes/above-average-magnitude")
 def get_earthquakes_above_average_magnitude():
     return earthquakes_above_average_magnitude()
+
+@app.get("/earthquakes/with-aftershocks-region")
+def query_8():
+    return earthquakes_with_aftershocks_and_region()
+
+@app.get("/earthquakes/aftershock-counts")
+def query_9():
+    return aftershock_counts_per_earthquake()
+
+@app.get("/earthquakes/above-threshold")
+def query_10(min_magnitude: float = 4.0):
+    return earthquakes_above_threshold(min_magnitude)
