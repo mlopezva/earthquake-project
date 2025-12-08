@@ -153,3 +153,77 @@ def earthquakes_above_average_magnitude():
             }
             for e in above_avg
         ]
+
+def earthquakes_with_aftershocks_and_region():
+    """Query 8: Earthquakes joined with their aftershocks and region information"""
+    with Session(engine) as session:
+        stmt = (
+            select(Earthquake, Aftershock, Location)
+            .join(Aftershock, Aftershock.earthquake_id == Earthquake.earthquake_id)
+            .join(Location, Location.location_id == Earthquake.location_id)
+            .where(
+                Earthquake.magnitude.is_not(None),
+                Aftershock.magnitude.is_not(None)
+            )
+        )
+
+        rows = session.exec(stmt).all()
+
+        return [
+            {
+                "earthquake_id": e.earthquake_id,
+                "earthquake_magnitude": e.magnitude,
+                "aftershock_id": a.aftershock_id,
+                "aftershock_magnitude": a.magnitude,
+                "region_name": loc.region_name,
+                "event_time": e.event_time
+            }
+            for e, a, loc in rows
+        ]
+
+    def aftershock_counts_per_earthquake():
+        """Query 9: Count how many aftershocks occurred for each main earthquake"""
+    with Session(engine) as session:
+        stmt = (
+            select(
+                Earthquake.earthquake_id,
+                func.count(Aftershock.aftershock_id).label("aftershock_count")
+            )
+            .join(
+                Aftershock,
+                Aftershock.earthquake_id == Earthquake.earthquake_id,
+                isouter=True
+            )
+            .group_by(Earthquake.earthquake_id)
+        )
+
+        rows = session.exec(stmt).all()
+
+        return [
+            {
+                "earthquake_id": earthquake_id,
+                "aftershock_count": aftershock_count
+            }
+            for earthquake_id, aftershock_count in rows
+        ]
+
+    def earthquakes_above_threshold(min_magnitude: float):
+        """Query 10: Earthquakes with magnitude above a selected threshold"""
+    with Session(engine) as session:
+        stmt = (
+            select(Earthquake)
+            .where(Earthquake.magnitude > min_magnitude)
+            .order_by(Earthquake.magnitude.desc())
+        )
+
+        rows = session.exec(stmt).all()
+
+        return [
+            {
+                "earthquake_id": e.earthquake_id,
+                "magnitude": e.magnitude,
+                "location_id": e.location_id,
+                "event_time": e.event_time
+            }
+            for e in rows
+        ]
