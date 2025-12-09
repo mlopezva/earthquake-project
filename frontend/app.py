@@ -45,3 +45,34 @@ if st.button("Earthquakes Above Average Magnitude"):
         st.dataframe(df)
     else:
         st.write("No results found")
+
+# Query 8: Earthquakes with aftershocks and region info
+if st.button("Show Earthquakes With Aftershocks + Region"):
+    response = requests.get(f"{BASE_URL}/earthquakes/with-aftershocks-region")
+    data = response.json()
+    if data:
+        df = pd.DataFrame(data)
+        st.dataframe(df)
+    else:
+        st.write("No results found")
+
+# Query 9: Aftershock counts per earthquake
+if st.button("Show Aftershock Counts Per Earthquake"):
+    response = requests.get(f"{BASE_URL}/earthquakes/aftershock-counts")
+    data = response.json()
+    if data:
+        df = pd.DataFrame(data)
+        st.dataframe(df)
+    else:
+        st.write("No results found")
+# Query 10: Earthquakes above a user-selected magnitude
+min_mag = st.number_input("Minimum Magnitude", min_value=0.0, max_value=10.0, step=0.1)
+
+if st.button("Find Earthquakes Above Threshold"):
+    response = requests.get(f"{BASE_URL}/earthquakes/above-threshold?min_magnitude={min_mag}")
+    data = response.json()
+    if data:
+        df = pd.DataFrame(data)
+        st.dataframe(df)
+    else:
+        st.write("No results found")
