@@ -1,8 +1,7 @@
 # Backend
-fastapi==0.111.3
+fastapi==0.111.1
 uvicorn==0.23.2
 sqlmodel==0.0.9
-sqlalchemy==2.0.24
 requests==2.31.0
 httpx==0.25.0
 

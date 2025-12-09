@@ -158,41 +158,45 @@ def earthquakes_with_aftershocks_and_region():
     """Query 8: Earthquakes joined with their aftershocks and region information"""
     with Session(engine) as session:
         stmt = (
-            select(Earthquake, Aftershock, Location)
+            select(
+                Earthquake.earthquake_id,
+                Earthquake.magnitude,
+                Earthquake.event_time,
+                Aftershock.aftershock_id,
+                Aftershock.magnitude,
+                Location.region_name,
+            )
             .join(Aftershock, Aftershock.earthquake_id == Earthquake.earthquake_id)
             .join(Location, Location.location_id == Earthquake.location_id)
-            .where(
-                Earthquake.magnitude.is_not(None),
-                Aftershock.magnitude.is_not(None)
-            )
         )
 
         rows = session.exec(stmt).all()
 
         return [
             {
-                "earthquake_id": e.earthquake_id,
-                "earthquake_magnitude": e.magnitude,
-                "aftershock_id": a.aftershock_id,
-                "aftershock_magnitude": a.magnitude,
-                "region_name": loc.region_name,
-                "event_time": e.event_time
+                "earthquake_id": eq_id,
+                "earthquake_magnitude": eq_mag,
+                "event_time": event_time,
+                "aftershock_id": a_id,
+                "aftershock_magnitude": a_mag,
+                "region_name": region,
             }
-            for e, a, loc in rows
+            for (eq_id, eq_mag, event_time, a_id, a_mag, region) in rows
         ]
 
-    def aftershock_counts_per_earthquake():
-        """Query 9: Count how many aftershocks occurred for each main earthquake"""
+
+def aftershock_counts_per_earthquake():
+    """Query 9: Count how many aftershocks occurred for each main earthquake"""
     with Session(engine) as session:
         stmt = (
             select(
                 Earthquake.earthquake_id,
-                func.count(Aftershock.aftershock_id).label("aftershock_count")
+                func.count(Aftershock.aftershock_id),
             )
             .join(
                 Aftershock,
                 Aftershock.earthquake_id == Earthquake.earthquake_id,
-                isouter=True
+                isouter=True,
             )
             .group_by(Earthquake.earthquake_id)
         )
@@ -201,17 +205,23 @@ def earthquakes_with_aftershocks_and_region():
 
         return [
             {
-                "earthquake_id": earthquake_id,
-                "aftershock_count": aftershock_count
+                "earthquake_id": eq_id,
+                "aftershock_count": int(count) if count is not None else 0,
             }
-            for earthquake_id, aftershock_count in rows
+            for (eq_id, count) in rows
         ]
 
-    def earthquakes_above_threshold(min_magnitude: float):
-        """Query 10: Earthquakes with magnitude above a selected threshold"""
+
+def earthquakes_above_threshold(min_magnitude: float):
+    """Query 10: Earthquakes with magnitude above a selected threshold"""
     with Session(engine) as session:
         stmt = (
-            select(Earthquake)
+            select(
+                Earthquake.earthquake_id,
+                Earthquake.magnitude,
+                Earthquake.location_id,
+                Earthquake.event_time,
+            )
             .where(Earthquake.magnitude > min_magnitude)
             .order_by(Earthquake.magnitude.desc())
         )
@@ -220,10 +230,10 @@ def earthquakes_with_aftershocks_and_region():
 
         return [
             {
-                "earthquake_id": e.earthquake_id,
-                "magnitude": e.magnitude,
-                "location_id": e.location_id,
-                "event_time": e.event_time
+                "earthquake_id": eq_id,
+                "magnitude": mag,
+                "location_id": loc_id,
+                "event_time": event_time,
             }
-            for e in rows
+            for (eq_id, mag, loc_id, event_time) in rows
         ]
