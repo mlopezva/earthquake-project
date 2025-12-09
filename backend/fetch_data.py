@@ -40,9 +40,10 @@ def fetch_earthquake_data():
     with Session(engine) as session:
         for feature in features:
             props = feature.get("properties", {})
-            geo = feature.get("geometry", {}).get("coordinates", [None, None, None])
-            longitude, latitude, depth = geo[0], geo[1], geo[2]
-
+            geo = feature.get("geometry", {}).get("coordinates", [])
+            longitude = geo[0] if len(geo)> 0 else None
+            latitude= geo[1] if len(geo)> 1 else None
+            depth= geo[2] if len(geo)> 2 else None
             region_name = props.get("place", "Unknown")
 
             # Location
@@ -56,12 +57,13 @@ def fetch_earthquake_data():
                     region_population=None
                 )
                 session.add(location)
-                session.commit()
-                session.refresh(location)
+                session.flush()
+                   
 
             # Earthquake
             eq_id = feature.get("id")
-            if not eq_id or props.get("mag") is None:
+            magnitude=props.get("mag")
+            if not eq_id or magnitude is None:
                 continue
 
             earthquake = session.get(Earthquake, eq_id)
@@ -69,7 +71,7 @@ def fetch_earthquake_data():
                 earthquake = Earthquake(
                     earthquake_id=eq_id,
                     location_id=location.location_id,
-                    magnitude=props["mag"],
+                    magnitude=magnitude,
                     event_time=datetime.fromtimestamp(props["time"]/1000),
                     event_duration=60.0,
                     latitude=latitude,
@@ -78,8 +80,8 @@ def fetch_earthquake_data():
                     place=region_name
                 )
                 session.add(earthquake)
-                session.commit()
-                session.refresh(earthquake)
+               
+               
                 print(f"Inserted earthquake {eq_id}")
 
             # Aftershock
@@ -95,9 +97,9 @@ def fetch_earthquake_data():
                     event_duration=30
                 )
                 session.add(aftershock)
-                session.commit()
+               
                 print(f"Inserted aftershock {aftershock_id}")
-
+    session.commit()
     print("Data insertion complete")
     return {"status": "Data inserted successfully"}
 

@@ -19,7 +19,7 @@ def home():
 def get_earthquakes_with_nearby_aftershocks():
     return earthquakes_with_nearby_aftershocks()
 
-@app.get("/regions/top-avg-magnitude")
+@app.get("/regions/top-5-avg-magnitude")
 def get_top_5_regions_by_avg_magnitude():
     return top_5_regions_by_avg_magnitude()
 

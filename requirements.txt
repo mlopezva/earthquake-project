@@ -1,13 +1,14 @@
 # Backend
-fastapi==0.111.3
+fastapi==0.115.5
 uvicorn==0.23.2
-sqlmodel==0.0.9
-sqlalchemy==2.0.24
+sqlmodel==0.0.16
+sqlalchemy==2.0.25
+pydantic==1.10.13
 requests==2.31.0
 httpx==0.25.0
 
 # Frontend
-streamlit==1.28.0
+streamlit==1.30.0
 pandas==2.1.1
 matplotlib==3.8.1
 python-dateutil==2.8.2
