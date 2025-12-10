@@ -44,19 +44,22 @@ The **Earthquake Risk Detection Information System** is a data-driven engineerin
 ---
 
 ## Project Structure
+```
+
 backend/
-├── database.py        # SQLite engine and table creation
-├── models.py          # SQLModel ORM definitions
-├── queries.py         # Database query logic
-├── fetch_data.py      # API ingestion and DB population
-└── main.py            # FastAPI app and endpoints
+├── database.py      # SQLite engine and table creation
+├── models.py        # SQLModel ORM definitions
+├── queries.py       # Database query logic
+├── fetch_data.py    # API ingestion and database population
+└── main.py          # FastAPI app and endpoints
 
 frontend/
-└── app.py             # Streamlit dashboard
+└── app.py           # Streamlit dashboard
 
-requirements.txt       # Dependencies
-README.md              # Documentation
+requirements.txt      # Python dependencies
+README.md             # Project documentation
 
+```
 
 ---
 
@@ -134,49 +137,3 @@ Dashboard available at: [http://localhost:8501](http://localhost:8501)
 | `/earthquakes/with-aftershocks-region`  |    GET | Earthquakes joined with region and aftershock info   |
 | `/earthquakes/aftershock-counts`        |    GET | Aftershock counts per earthquake                     |
 | `/earthquakes/above-threshold`          |    GET | Earthquakes above a user-defined magnitude threshold |
-
----
-
-## System Flow
-
-### Simple Flow
-
-```
-[USGS API] 
-    ↓ 
-[Backend: FastAPI + SQLModel] 
-    ↓ 
-[SQLite Database] 
-    ↓ 
-[Frontend: Streamlit Dashboard]
-```
-
-### ASCII Diagram
-
-```
-+------------------------+
-|       USGS API         |
-+-----------+------------+
-            v
-+------------------------+
-| Backend: FastAPI       |
-|        + SQLModel      |
-+-----------+------------+
-            v
-+------------------------+
-|     SQLite Database    |
-+-----------+------------+
-            v
-+------------------------+
-| Frontend: Streamlit    |
-+------------------------+
-```
-
-### Mermaid Diagram
-
-```mermaid
-flowchart TD
-    A[USGS API] --> B[Backend: FastAPI + SQLModel]
-    B --> C[SQLite Database]
-    C --> D[Frontend: Streamlit Dashboard]
-```
