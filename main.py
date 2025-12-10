@@ -6,7 +6,10 @@ from backend.queries import (
     aftershocks_main_info_magnitude_gt_5,
     regions_above_avg_earthquake_counts,
     top_10_seismically_active_regions,
-    earthquakes_above_average_magnitude
+    earthquakes_above_average_magnitude,
+    earthquakes_with_aftershocks_and_region,
+    aftershock_counts_per_earthquake,
+    earthquakes_above_threshold,
 )
 
 app = FastAPI()
@@ -44,13 +47,13 @@ def get_earthquakes_above_average_magnitude():
     return earthquakes_above_average_magnitude()
 
 @app.get("/earthquakes/with-aftershocks-region")
-def query_8():
+def get_earthquakes_with_aftershock_region():
     return earthquakes_with_aftershocks_and_region()
 
 @app.get("/earthquakes/aftershock-counts")
-def query_9():
+def get_aftershock_counts_per_earthquake():
     return aftershock_counts_per_earthquake()
 
 @app.get("/earthquakes/above-threshold")
-def query_10(min_magnitude: float = 4.0):
+def get_earthquakes_above_threshold(min_magnitude: float = 4.0):
     return earthquakes_above_threshold(min_magnitude)

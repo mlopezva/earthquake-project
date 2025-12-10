@@ -79,4 +79,8 @@ if st.button("Top 10 Seismically Active Regions"):
 if st.button("Earthquakes Above Average Magnitude"):
     response = requests.get(f"{BASE_URL}/earthquakes/above-average-magnitude")
     data = response.json()
-    show_data(data)
+    if data:
+        df = pd.DataFrame(data)
+        st.dataframe(df)
+    else:
+        st.write("No results found")
