@@ -106,17 +106,10 @@ if st.button("Show Aftershock Counts Per Earthquake"):
         st.write("No results found")
 
 # Query 10: Earthquakes above a user-selected magnitude
-min_mag = st.number_input(
-    "Minimum Magnitude", min_value=0.0, max_value=10.0, step=0.1, value=0.0
-)
-
-if st.button("Find Earthquakes Above Threshold"):
-    response = requests.get(
-        f"{BASE_URL}/earthquakes/above-threshold?min_magnitude={min_mag}"
-    )
+with st.form(key="threshold_form"):
+    min_mag = st.number_input("Minimum Magnitude", min_value=0.0, max_value=10.0, step=0.1)
+    submit_button = st.form_submit_button("Find Earthquakes Above Threshold")
+if submit_button:  
+    response = requests.get(f"{BASE_URL}/earthquakes/above-threshold?min_magnitude={min_mag}")
     data = response.json()
-    if data:
-        df = pd.DataFrame(data)
-        st.dataframe(df)
-    else:
-        st.write("No results found")
+    show_data(data)
