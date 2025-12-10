@@ -1,45 +1,49 @@
-Earthquake Risk Detection Information System
-Overview
+# Earthquake Risk Detection Information System
 
-The Earthquake Risk Detection Information System is a data-driven engineering tool designed to help construction, civil, and industrial engineers make informed decisions using real-time seismic activity. The system integrates with the USGS Earthquake API to ingest live earthquake data, store it in a structured SQL database, and deliver analytical insights through a responsive Streamlit dashboard.
+## Overview
+The **Earthquake Risk Detection Information System** is a data-driven engineering tool designed to help construction, civil, and industrial engineers make informed decisions using real-time seismic activity. The system integrates with the **USGS Earthquake API** to ingest live earthquake data, store it in a structured SQL database, and deliver analytical insights through a responsive Streamlit dashboard.
 
-Target Users
-Primary Users
+---
 
-Construction engineers (infrastructure planning, seismic safety)
+## Target Users
 
-Secondary Users
+### Primary Users
+- Construction engineers (infrastructure planning, seismic safety)
 
-Civil engineers (site analysis, hazard assessments)
+### Secondary Users
+- Civil engineers (site analysis, hazard assessments)
 
-Tertiary Users
+### Tertiary Users
+- Industrial engineers (disaster logistics, supply chain resilience)
 
-Industrial engineers (disaster logistics, supply chain resilience)
+---
 
-Primary Use Cases
+## Primary Use Cases
+- **Emergency Response Planning** – Identify optimal evacuation routes and resource allocation zones before and after seismic events.
+- **Infrastructure Safety Evaluation** – Assess construction site viability using up-to-date seismic risk information.
+- **Regional Seismic Risk Analysis** – Determine earthquake frequency, magnitude trends, and regional danger levels.
 
-Emergency Response Planning – Identify optimal evacuation routes and resource allocation zones before and after seismic events.
+---
 
-Infrastructure Safety Evaluation – Assess construction site viability using up-to-date seismic risk information.
-
-Regional Seismic Risk Analysis – Determine earthquake frequency, magnitude trends, and regional danger levels.
-
-System Architecture
-[USGS API] 
-     ↓ 
+## System Architecture
+[USGS API]
+        ↓
 [Backend: FastAPI + SQLModel]
-     ↓ 
+        ↓
 [SQLite Database]
-     ↓ 
+        ↓
 [Frontend: Streamlit Dashboard]
 
-Entity Relationships
 
-Location (1 to many) Earthquake
+---
 
-Earthquake (1 to many) Aftershock
+## Entity Relationships
+- **Location (1 → many) Earthquake**
+- **Earthquake (1 → many) Aftershock**
 
-Project Structure
+---
+
+## Project Structure
 backend/
 ├── database.py        # SQLite engine and table creation
 ├── models.py          # SQLModel ORM definitions
@@ -53,61 +57,126 @@ frontend/
 requirements.txt       # Dependencies
 README.md              # Documentation
 
-Technology Stack
 
-Backend: FastAPI, SQLModel, requests/httpx
+---
 
-Database: SQLite
+## Technology Stack
+- **Backend:** FastAPI, SQLModel, requests/httpx  
+- **Database:** SQLite  
+- **Frontend:** Streamlit  
+- **Visualization:** Matplotlib  
 
-Frontend: Streamlit
+---
 
-Visualization: Matplotlib
+## Setup Instructions
 
-Setup Instructions
-1. Clone the Repository
-git clone https://github.com/<your-username>/earthquake-risk-detection.git
+### 1. Clone the Repository
+```bash
+git clone https://github.com//earthquake-risk-detection.git
 cd earthquake-risk-detection
 
-2. Install Dependencies
+## Installation & Setup
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/earthquake-risk-detection.git
+cd earthquake-risk-detection
+````
+
+### 2. Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-3. Initialize the Database
+### 3. Initialize the Database
+
+```bash
 python backend/database.py
+```
 
-4. Fetch Real-Time Data from USGS
+### 4. Fetch Real-Time Data from USGS
+
+```bash
 python -m backend.fetch_data
+```
 
-5. Run the Backend (FastAPI)
+### 5. Run the Backend (FastAPI)
+
+```bash
 uvicorn backend.main:app --reload
+```
 
+API documentation available at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-API documentation available at:
-http://127.0.0.1:8000/docs
+### 6. Run the Frontend Dashboard
 
-6. Run the Frontend Dashboard
+```bash
 cd frontend
 streamlit run app.py
+```
 
+Dashboard available at: [http://localhost:8501](http://localhost:8501)
 
-Dashboard available at:
-http://localhost:8501
+---
 
-API Endpoints
-Endpoint	Method	Description
-/earthquakes/nearby-aftershocks	GET	Earthquakes with aftershocks within a radius
-/regions/top-5-avg-magnitude	GET	Top 5 regions by average magnitude
-/aftershocks/strong-24h	GET	Aftershocks greater than magnitude 4.0 in the last 24 hours
-/aftershocks/main-info-magnitude-gt-5	GET	Aftershocks with main earthquake magnitude greater than 5
-/regions/above-average-count	GET	Regions with above-average earthquake counts
-/regions/top-seismic-activity	GET	Top 10 most seismically active regions
-/earthquakes/above-average-magnitude	GET	Earthquakes above the overall average magnitude
-/earthquakes/with-aftershocks-region	GET	Earthquakes joined with region and aftershock information
-/earthquakes/aftershock-counts	GET	Aftershock counts per earthquake
-/earthquakes/above-threshold	GET	Earthquakes above a user-defined magnitude threshold
-Testing
+## API Endpoints
 
-Verified database schema and sample data using SQLite queries
+| Endpoint                                | Method | Description                                          |
+| --------------------------------------- | -----: | ---------------------------------------------------- |
+| `/earthquakes/nearby-aftershocks`       |    GET | Earthquakes with aftershocks within a radius         |
+| `/regions/top-5-avg-magnitude`          |    GET | Top 5 regions by average magnitude                   |
+| `/aftershocks/strong-24h`               |    GET | Aftershocks > 4.0 magnitude in last 24 hours         |
+| `/aftershocks/main-info-magnitude-gt-5` |    GET | Aftershocks where main earthquake magnitude > 5      |
+| `/regions/above-average-count`          |    GET | Regions with above-average earthquake counts         |
+| `/regions/top-seismic-activity`         |    GET | Top 10 most seismically active regions               |
+| `/earthquakes/above-average-magnitude`  |    GET | Earthquakes above overall average magnitude          |
+| `/earthquakes/with-aftershocks-region`  |    GET | Earthquakes joined with region and aftershock info   |
+| `/earthquakes/aftershock-counts`        |    GET | Aftershock counts per earthquake                     |
+| `/earthquakes/above-threshold`          |    GET | Earthquakes above a user-defined magnitude threshold |
 
-Validated API endpoints using Swagger UI documentation
+---
 
-Checked frontend and backend integration to ensure responsive visualizations
+## System Flow
+
+### Simple Flow
+
+```
+[USGS API] 
+    ↓ 
+[Backend: FastAPI + SQLModel] 
+    ↓ 
+[SQLite Database] 
+    ↓ 
+[Frontend: Streamlit Dashboard]
+```
+
+### ASCII Diagram
+
+```
++------------------------+
+|       USGS API         |
++-----------+------------+
+            v
++------------------------+
+| Backend: FastAPI       |
+|        + SQLModel      |
++-----------+------------+
+            v
++------------------------+
+|     SQLite Database    |
++-----------+------------+
+            v
++------------------------+
+| Frontend: Streamlit    |
++------------------------+
+```
+
+### Mermaid Diagram
+
+```mermaid
+flowchart TD
+    A[USGS API] --> B[Backend: FastAPI + SQLModel]
+    B --> C[SQLite Database]
+    C --> D[Frontend: Streamlit Dashboard]
+```
